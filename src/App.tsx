@@ -1,0 +1,59 @@
+
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import HumanResponse from './pages/HumanResponse'; 
+import Aichat from "./pages/Aichat";
+import NotFound from "./pages/NotFound";
+import Layout from './components/Layout';
+import LayoutWithoutFooter from './components/LayoutWithoutFooter';
+import ProtectedRoute from './components/ProtectedRoute';
+import RouteLoadingScreen from './components/RouteLoadingScreen';
+import { useRouteLoading } from './hooks/useRouteLoading';
+
+const queryClient = new QueryClient();
+
+const AppContent = () => {
+  const { isRouteLoading } = useRouteLoading();
+
+  return (
+    <>
+      {isRouteLoading && <RouteLoadingScreen />}
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Index />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+        <Route path="/" element={<LayoutWithoutFooter />}>
+          <Route path="get-started" element={
+            <ProtectedRoute>
+              <HumanResponse />
+            </ProtectedRoute>
+          } />
+          <Route path="Ai-chat" element={
+            <ProtectedRoute>
+              <Aichat />
+            </ProtectedRoute>
+          } />
+        </Route>
+      </Routes>
+    </>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;
