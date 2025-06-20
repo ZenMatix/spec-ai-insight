@@ -85,11 +85,11 @@ const OurExpertiseSection = () => {
             <Award className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6 leading-tight text-center sm:text-center">
-            <span className="block">Understand</span>
+            <span className="block">Our</span>
             <span className="block bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-              Specifications
+              Expertise
             </span>
-            <span className="block">Instantly with AI</span>
+            
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8 rounded-full shadow-lg"></div>
           <p className="text-lg sm:text-xl lg:text-2xl text-slate-600 max-w-5xl mx-auto leading-relaxed font-light px-4 sm:px-0">
