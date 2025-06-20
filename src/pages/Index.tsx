@@ -27,7 +27,7 @@
 
 import HeroSection from '@/components/HeroSection';
 import OurExpertiseSection from '@/components/OurExpertise';
-import GetStartedSection from '@/components/GetStartedSection';
+
 import HowItWorksSection from '@/components/HowItWorksSection';
 import UseCasesSection from '@/components/UseCasesSection';
 import AboutSection from '@/components/AboutSection';
@@ -46,7 +46,6 @@ const Index = () => {
     <div className="min-h-screen bg-transparent">
       <HeroSection />
       <OurExpertiseSection/>
-      {/* <GetStartedSection /> */}
       <HowItWorksSection />
       <UseCasesSection />
       <AboutSection />
