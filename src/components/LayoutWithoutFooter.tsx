@@ -1,11 +1,14 @@
 
 import Navigation from '@/components/Navigation';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const LayoutWithoutFooter = () => {
+  const location = useLocation();
+  const hideNavigation = location.pathname === '/sign-in' || location.pathname === '/sign-up';
+
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      {!hideNavigation && <Navigation />}
       <main>
         <Outlet />
       </main>

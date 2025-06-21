@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useSignUp } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -13,8 +14,6 @@ const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,8 +33,6 @@ const SignUp = () => {
       await signUp.create({
         emailAddress: email,
         password,
-        firstName,
-        lastName,
       });
 
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -224,52 +221,6 @@ const SignUp = () => {
                   {errors.general}
                 </div>
               )}
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-slate-700 font-medium">
-                    First Name
-                  </Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="John"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className={`transition-all duration-200 ${
-                      errors.firstName 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
-                    }`}
-                    required
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-sm">{errors.firstName}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-slate-700 font-medium">
-                    Last Name
-                  </Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className={`transition-all duration-200 ${
-                      errors.lastName 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
-                    }`}
-                    required
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500 text-sm">{errors.lastName}</p>
-                  )}
-                </div>
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-700 font-medium">
