@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,11 +73,11 @@ const Navigation = () => {
 
               {/* Authentication buttons */}
               <SignedOut>
-                <SignInButton fallbackRedirectUrl="/">
+                <Link to="/sign-in">
                   <Button className="gradient-primary text-white px-6 rounded-full hover:scale-105 transition-transform duration-200 shadow-md">
                     Get Started
                   </Button>
-                </SignInButton>
+                </Link>
               </SignedOut>
 
               <SignedIn>
@@ -123,11 +123,11 @@ const Navigation = () => {
 
                   {/* Mobile Authentication */}
                   <SignedOut>
-                    <SignInButton fallbackRedirectUrl="/">
-                      <Button className="gradient-primary text-white w-full rounded-full" onClick={() => setIsOpen(false)}>
+                    <Link to="/sign-in" onClick={() => setIsOpen(false)}>
+                      <Button className="gradient-primary text-white w-full rounded-full">
                         Get Started
                       </Button>
-                    </SignInButton>
+                    </Link>
                   </SignedOut>
 
                   <SignedIn>

@@ -14,45 +14,8 @@ import NotFound from "./pages/NotFound";
 import Layout from './components/Layout';
 import LayoutWithoutFooter from './components/LayoutWithoutFooter';
 import ProtectedRoute from './components/ProtectedRoute';
-import RouteLoadingScreen from './components/RouteLoadingScreen';
-import { useRouteLoading } from './hooks/useRouteLoading';
 
 const queryClient = new QueryClient();
-
-const AppContent = () => {
-  const { isRouteLoading } = useRouteLoading();
-
-  return (
-    <>
-      {isRouteLoading && <RouteLoadingScreen />}
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Index />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-        <Route path="/" element={<LayoutWithoutFooter />}>
-          <Route path="sign-in" element={<SignIn />} />
-          <Route path="sign-up" element={<SignUp />} />
-          <Route path="dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="get-started" element={
-            <ProtectedRoute>
-              <HumanResponse />
-            </ProtectedRoute>
-          } />
-          <Route path="Ai-chat" element={
-            <ProtectedRoute>
-              <Aichat />
-            </ProtectedRoute>
-          } />
-        </Route>
-      </Routes>
-    </>
-  );
-};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -60,7 +23,31 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppContent />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Index />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route path="/" element={<LayoutWithoutFooter />}>
+            <Route path="sign-in" element={<SignIn />} />
+            <Route path="sign-up" element={<SignUp />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="get-started" element={
+              <ProtectedRoute>
+                <HumanResponse />
+              </ProtectedRoute>
+            } />
+            <Route path="Ai-chat" element={
+              <ProtectedRoute>
+                <Aichat />
+              </ProtectedRoute>
+            } />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
