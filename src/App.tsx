@@ -9,7 +9,6 @@ import HumanResponse from './pages/HumanResponse';
 import Aichat from "./pages/Aichat";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Layout from './components/Layout';
 import LayoutWithoutFooter from './components/LayoutWithoutFooter';
@@ -31,11 +30,6 @@ const App = () => (
           <Route path="/" element={<LayoutWithoutFooter />}>
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
-            <Route path="dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
             <Route path="get-started" element={
               <ProtectedRoute>
                 <HumanResponse />

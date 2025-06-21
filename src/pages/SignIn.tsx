@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -34,7 +33,7 @@ const SignIn = () => {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         toast.success('Welcome back!');
-        navigate('/dashboard');
+        navigate('/');
       } else {
         console.log(result);
       }

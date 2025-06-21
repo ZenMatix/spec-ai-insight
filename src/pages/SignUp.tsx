@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useSignUp } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -78,7 +77,7 @@ const SignUp = () => {
       if (completeSignUp.status === 'complete') {
         await setActive({ session: completeSignUp.createdSessionId });
         toast.success('Account created successfully! Welcome aboard!');
-        navigate('/dashboard');
+        navigate('/');
       } else {
         console.log(completeSignUp);
       }
