@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 
 const LoadingScreen = () => {
@@ -15,7 +16,7 @@ const LoadingScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-500 ${fadeClass}`}
+      className={`fixed inset-0 flex items-center justify-center z-[9999] transition-opacity duration-500 ${fadeClass}`}
       style={{
         backgroundImage:
           "url(https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec/Header.webp)",
