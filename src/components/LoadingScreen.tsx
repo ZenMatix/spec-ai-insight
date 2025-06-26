@@ -1,27 +1,27 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const LoadingScreen = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const [fadeClass, setFadeClass] = useState('opacity-0');
+  const [fadeClass, setFadeClass] = useState("opacity-0");
 
   useEffect(() => {
     // Fade in animation
     const fadeInTimer = setTimeout(() => {
-      setFadeClass('opacity-100');
+      setFadeClass("opacity-100");
     }, 50);
 
     return () => clearTimeout(fadeInTimer);
   }, []);
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-500 ${fadeClass}`}
       style={{
-        backgroundImage: 'url(/Header.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundImage:
+          "url(https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec/Header.webp)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Dark overlay for better text readability */}
@@ -40,9 +40,18 @@ const LoadingScreen = () => {
 
         {/* Loading Animation - Spinning Dots */}
         <div className="flex space-x-2 mb-6">
-          <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-          <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-          <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          <div
+            className="w-3 h-3 bg-white rounded-full animate-bounce"
+            style={{ animationDelay: "0ms" }}
+          ></div>
+          <div
+            className="w-3 h-3 bg-white rounded-full animate-bounce"
+            style={{ animationDelay: "150ms" }}
+          ></div>
+          <div
+            className="w-3 h-3 bg-white rounded-full animate-bounce"
+            style={{ animationDelay: "300ms" }}
+          ></div>
         </div>
 
         {/* Loading Message */}

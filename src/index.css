@@ -24,7 +24,7 @@
   body {
     @apply text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background-image: url('/Header.jpg');
+    background-image: url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
