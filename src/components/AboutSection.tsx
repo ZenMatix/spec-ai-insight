@@ -155,28 +155,9 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="text-center mt-16">
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/60 shadow-xl">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">
-              Ready to Transform Your Specification Workflow?
-            </h3>
-            <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-              Join the growing number of engineering teams who are saving time and
-              improving accuracy with AI-powered specification analysis.
-            </p>
-            <button
-              onClick={() =>
-                document
-                  .querySelector("#get-started")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="gradient-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:scale-105 transition-transform duration-200"
-            >
-              Start Your Free Trial
-            </button>
-          </div>
-        </div>
+        
+
+        
       </div>
     </section>
   );

@@ -94,7 +94,7 @@ const HumanResponse = () => {
     formData.append('message', message);
 
     try {
-      const response = await fetch('http://localhost:5000/send-email', {
+      const response = await fetch('http://localhost:3002/send-email', {
         method: 'POST',
         body: formData,
       });
@@ -160,7 +160,7 @@ const HumanResponse = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">Email Us</h3>
-                      <p className="text-gray-600">inquiry@vdospec.com</p>
+                      <p className="text-gray-600">hello@vdospec.ai</p>
                     </div>
                   </div>
                   
@@ -170,7 +170,7 @@ const HumanResponse = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">Call Us</h3>
-                      <p className="text-gray-600">+1 (000) 123-4567</p>
+                      <p className="text-gray-600">+1 (555) 123-4567</p>
                     </div>
                   </div>
                 </div>

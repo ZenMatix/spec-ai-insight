@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,7 +12,11 @@ const ContactSection = () => {
     message: '',
     type: 'general'
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Environment variable for API URL (fallback to localhost for development)
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -22,7 +25,7 @@ const ContactSection = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -35,20 +38,66 @@ const ContactSection = () => {
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "Message sent successfully!",
-      description: "We'll get back to you within 24 hours.",
-    });
+    setIsLoading(true);
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      company: '',
-      message: '',
-      type: 'general'
-    });
+    try {
+      // Show loading toast
+      toast({
+        title: "Sending message...",
+        description: "Please wait while we send your message.",
+      });
+
+      // Send data to backend
+      const response = await fetch(`${API_URL}/api/inquiry-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message,
+          type: formData.type
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Success
+        toast({
+          title: "Message sent successfully!",
+          description: "We'll get back to you within 24 hours.",
+        });
+
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          message: '',
+          type: 'general'
+        });
+      } else {
+        // Error from backend
+        toast({
+          title: "Failed to send message",
+          description: result.error || "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      // Network error or other issues
+      console.error('Error sending email:', error);
+      toast({
+        title: "Network error",
+        description: "Unable to send message. Please check your connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const contactOptions = [
@@ -88,7 +137,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mb-16">
+        {/* <div className="grid lg:grid-cols-3 gap-8 mb-16">
           {contactOptions.map((option, index) => (
             <Card key={index} className="p-6 bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-300 text-center">
               <div className="w-16 h-16 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -108,7 +157,7 @@ const ContactSection = () => {
               </Button>
             </Card>
           ))}
-        </div>
+        </div> */}
 
         {/* Contact Form */}
         <div className="max-w-4xl mx-auto">
@@ -137,6 +186,7 @@ const ContactSection = () => {
                     className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Your full name"
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div>
@@ -152,6 +202,7 @@ const ContactSection = () => {
                     className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="your.email@company.com"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -169,6 +220,7 @@ const ContactSection = () => {
                     onChange={handleInputChange}
                     className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Your company name"
+                    disabled={isLoading}
                   />
                 </div>
                 <div>
@@ -181,12 +233,13 @@ const ContactSection = () => {
                     value={formData.type}
                     onChange={handleInputChange}
                     className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isLoading}
                   >
                     <option value="general">General Inquiry</option>
                     <option value="demo">Request Demo</option>
                     <option value="support">Technical Support</option>
-                    <option value="partnership">Partnership</option>
-                    <option value="pricing">Pricing Information</option>
+                    {/* <option value="partnership">Partnership</option>
+                    <option value="pricing">Pricing Information</option> */}
                   </select>
                 </div>
               </div>
@@ -204,16 +257,18 @@ const ContactSection = () => {
                   className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   placeholder="Tell us about your specification challenges and how we can help..."
                   required
+                  disabled={isLoading}
                 />
               </div>
 
               <div className="text-center">
                 <Button 
                   type="submit"
-                  className="gradient-primary text-white px-8 py-4 text-lg font-semibold hover:scale-105 transition-transform duration-200"
+                  disabled={isLoading}
+                  className="gradient-primary text-white px-8 py-4 text-lg font-semibold hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   <Send className="w-5 h-5 mr-2" />
-                  Send Message
+                  {isLoading ? 'Sending...' : 'Send Message'}
                 </Button>
               </div>
             </form>
@@ -241,14 +296,7 @@ const ContactSection = () => {
                 question: "How secure is my document data?",
                 answer: "We use enterprise-grade encryption and follow industry best practices for data security. Your documents are processed securely and never shared with third parties."
               },
-              {
-                question: "Can I integrate Vdospec AI with my existing tools?",
-                answer: "Yes! We offer API access and integrations with popular engineering and project management platforms. Contact us to discuss your specific integration needs."
-              },
-              {
-                question: "How accurate are the AI responses?",
-                answer: "Our AI maintains over 90% accuracy on technical specifications. We continuously improve our models based on user feedback and industry-specific training data."
-              }
+              
             ].map((faq, index) => (
               <Card key={index} className="p-6 bg-white shadow-lg border-0">
                 <h4 className="text-lg font-semibold text-slate-900 mb-3">

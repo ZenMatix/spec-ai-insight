@@ -13,7 +13,7 @@ const GetStartedFooter = () => {
           </div>
           <div className="space-y-2 md:space-y-0 md:space-x-6 md:flex md:items-center">
             <div className="text-gray-600 text-sm">
-              Need help? Contact us at <span className="text-blue-600 font-medium">hello@vdospec.ai</span>
+              Need help? Contact us at <span className="text-blue-600 font-medium">inquiry@vdospec.com</span>
             </div>
             <div className="text-gray-500 text-sm">
               © {currentYear} Vdospec AI. All rights reserved.

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -21,9 +20,10 @@ const Navigation = () => {
     { label: "Contact", href: "#contact" },
   ];
 
-  const displayNavItems = (isGetStartedPage || isAiChatPage)
-    ? navItems.filter((item) => item.label === "Home")
-    : navItems;
+  const displayNavItems =
+    isGetStartedPage || isAiChatPage
+      ? navItems.filter((item) => item.label === "Home")
+      : navItems;
 
   const handleNavClick = (href: string) => {
     setIsOpen(false);
@@ -41,9 +41,14 @@ const Navigation = () => {
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo - Now clickable */}
-            <div className="flex items-center">
-              <Link 
-                to="/" 
+            <div className="flex items-center space-x-2">
+              <img
+                src="/favicon.png"
+                alt="Vdospec Logo"
+                className="h-8 w-8 object-contain"
+              />
+              <Link
+                to="/"
                 className="text-2xl font-bold text-gradient hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
                 Vdospec AI
@@ -82,12 +87,13 @@ const Navigation = () => {
 
               <SignedIn>
                 <div className="flex items-center">
-                  <UserButton 
+                  <UserButton
                     afterSignOutUrl="/"
                     appearance={{
                       elements: {
-                        avatarBox: "w-8 h-8 rounded-full hover:scale-110 transition-transform duration-200"
-                      }
+                        avatarBox:
+                          "w-8 h-8 rounded-full hover:scale-110 transition-transform duration-200",
+                      },
                     }}
                   />
                 </div>
@@ -104,8 +110,13 @@ const Navigation = () => {
               <SheetContent side="right" className="w-80 rounded-l-2xl">
                 <div className="flex flex-col space-y-6 mt-8">
                   {displayNavItems.map((item) =>
-                    (isGetStartedPage || isAiChatPage) && item.label === "Home" ? (
-                      <Link key={item.label} to="/" onClick={() => setIsOpen(false)}>
+                    (isGetStartedPage || isAiChatPage) &&
+                    item.label === "Home" ? (
+                      <Link
+                        key={item.label}
+                        to="/"
+                        onClick={() => setIsOpen(false)}
+                      >
                         <Button className="gradient-primary text-white w-full rounded-full hover:scale-105 transition-transform duration-200">
                           {item.label}
                         </Button>
@@ -132,12 +143,12 @@ const Navigation = () => {
 
                   <SignedIn>
                     <div className="flex items-center justify-center mt-4">
-                      <UserButton 
+                      <UserButton
                         afterSignOutUrl="/"
                         appearance={{
                           elements: {
-                            avatarBox: "w-10 h-10 rounded-full"
-                          }
+                            avatarBox: "w-10 h-10 rounded-full",
+                          },
                         }}
                       />
                     </div>

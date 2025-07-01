@@ -54,7 +54,7 @@ const HowItWorksSection = () => {
         "Receive precise, contextual answers with exact references to relevant sections in your documents.",
       color: "bg-purple-500",
       badges: ["Accurate", "Referenced"],
-      details: "99.2% accuracy rate with direct citations to source material and confidence scoring for each answer."
+      details: "90% accuracy rate with direct citations to source material and confidence scoring for each answer."
     },
     {
       icon: CheckCircle,
@@ -101,7 +101,7 @@ const HowItWorksSection = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {[
               { icon: Clock, label: "Time Saved", value: "75%" },
-              { icon: Target, label: "Accuracy", value: "99.2%" },
+              { icon: Target, label: "Accuracy", value: "90%" },
               { icon: Zap, label: "Speed", value: "3x Faster" },
               { icon: Shield, label: "Security", value: "Enterprise" }
             ].map((stat, index) => (
