@@ -1,5 +1,6 @@
 
 import Navigation from '@/components/Navigation';
+import ScrollToTop from '@/components/ScrollToTop';
 import { Outlet, useLocation } from 'react-router-dom';
 
 const LayoutWithoutFooter = () => {
@@ -12,6 +13,7 @@ const LayoutWithoutFooter = () => {
       <main>
         <Outlet />
       </main>
+      <ScrollToTop />
     </div>
   );
 };
