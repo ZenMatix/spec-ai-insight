@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate, Link } from "react-router-dom";
@@ -12,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Mail } from "lucide-react";
 
 const SignIn = () => {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -20,6 +21,8 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
 
@@ -64,6 +67,51 @@ const SignIn = () => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoaded || !email) {
+      toast.error("Please enter your email address first.");
+      return;
+    }
+
+    setIsResetLoading(true);
+    setErrors({});
+
+    try {
+      await signIn.create({
+        identifier: email,
+      });
+
+      const firstFactor = signIn.supportedFirstFactors.find(
+        (factor) => factor.strategy === "reset_password_email_code"
+      );
+
+      if (firstFactor) {
+        await signIn.prepareFirstFactor({
+          strategy: "reset_password_email_code",
+          emailAddressId: firstFactor.emailAddressId,
+        });
+
+        toast.success("Password reset email sent! Check your inbox.");
+        setIsForgotPassword(false);
+      }
+    } catch (err: any) {
+      console.error("Reset password error:", err);
+      if (err.errors) {
+        const newErrors: { [key: string]: string } = {};
+        err.errors.forEach((error: any) => {
+          newErrors.general = error.message;
+        });
+        setErrors(newErrors);
+      } else {
+        setErrors({ general: "Failed to send reset email. Please try again." });
+      }
+      toast.error("Failed to send reset email. Please try again.");
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
@@ -71,9 +119,6 @@ const SignIn = () => {
         backgroundImage: `url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp')`,
       }}
     >
-      {/* Overlay for better contrast */}
-      {/* <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div> */}
-
       <div className="w-full max-w-md relative z-10">
         <div className="mb-8 text-center">
           <Link
@@ -84,24 +129,30 @@ const SignIn = () => {
             Back to Home
           </Link>
           <h1 className="text-3xl font-bold text-black mb-2 drop-shadow-lg">
-            Welcome Back
+            {isForgotPassword ? "Reset Password" : "Welcome Back"}
           </h1>
           <p className="text-black/90 drop-shadow-md">
-            Sign in to your account to continue
+            {isForgotPassword 
+              ? "Enter your email to receive a password reset link"
+              : "Sign in to your account to continue"
+            }
           </p>
         </div>
 
         <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-md">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-bold text-center text-slate-900">
-              Sign In
+              {isForgotPassword ? "Reset Password" : "Sign In"}
             </CardTitle>
             <CardDescription className="text-center text-slate-600">
-              Enter your credentials to access your account
+              {isForgotPassword 
+                ? "We'll send you a password reset email"
+                : "Enter your credentials to access your account"
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={isForgotPassword ? handleForgotPassword : handleSubmit} className="space-y-4">
               {errors.general && (
                 <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
                   {errors.general}
@@ -130,52 +181,87 @@ const SignIn = () => {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="password"
-                  className="text-slate-700 font-medium"
-                >
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={`pr-10 transition-all duration-200 ${
-                      errors.password
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
-                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-100"
-                    }`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
+              {!isForgotPassword && (
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-slate-700 font-medium">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`pr-10 transition-all duration-200 ${
+                        errors.password
+                          ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                          : "border-slate-200 focus:border-blue-500 focus:ring-blue-100"
+                      }`}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">{errors.password}</p>
+                  )}
                 </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password}</p>
-                )}
-              </div>
+              )}
 
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
-                disabled={isLoading}
+                disabled={isForgotPassword ? isResetLoading : isLoading}
               >
-                {isLoading ? "Signing In..." : "Sign In"}
+                {isForgotPassword ? (
+                  isResetLoading ? (
+                    <>
+                      <Mail className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4 mr-2" />
+                      Send Reset Email
+                    </>
+                  )
+                ) : (
+                  isLoading ? "Signing In..." : "Sign In"
+                )}
               </Button>
             </form>
+
+            {!isForgotPassword && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setIsForgotPassword(true)}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+                >
+                  Forgot your password?
+                </button>
+              </div>
+            )}
+
+            {isForgotPassword && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setIsForgotPassword(false)}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            )}
 
             <div className="mt-6 text-center">
               <p className="text-slate-600">
