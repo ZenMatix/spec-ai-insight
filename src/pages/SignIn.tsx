@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate, Link } from "react-router-dom";
@@ -12,8 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { toast } from "sonner";
-import { Eye, EyeOff, ArrowLeft, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Mail, Lock, CheckCircle } from "lucide-react";
 
 const SignIn = () => {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -24,6 +28,7 @@ const SignIn = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [isCodeVerification, setIsCodeVerification] = useState(false);
+  const [isResetSuccess, setIsResetSuccess] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -127,6 +132,11 @@ const SignIn = () => {
       return;
     }
 
+    if (verificationCode.length !== 6) {
+      setErrors({ verificationCode: "Please enter the complete 6-digit code" });
+      return;
+    }
+
     setIsPasswordResetLoading(true);
     setErrors({});
 
@@ -138,17 +148,20 @@ const SignIn = () => {
       });
 
       if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        toast.success("Password reset successful! You're now signed in.");
-        navigate("/");
+        // Don't automatically log in to prevent session conflicts
+        toast.success("Password reset successful!");
+        setIsResetSuccess(true);
+        setIsCodeVerification(false);
       }
     } catch (err: any) {
       console.error("Password reset error:", err);
       if (err.errors) {
         const newErrors: { [key: string]: string } = {};
         err.errors.forEach((error: any) => {
-          if (error.meta?.paramName) {
-            newErrors[error.meta.paramName] = error.message;
+          if (error.meta?.paramName === "code") {
+            newErrors.verificationCode = error.message;
+          } else if (error.meta?.paramName === "password") {
+            newErrors.newPassword = error.message;
           } else {
             newErrors.general = error.message;
           }
@@ -166,6 +179,7 @@ const SignIn = () => {
   const resetToSignIn = () => {
     setIsForgotPassword(false);
     setIsCodeVerification(false);
+    setIsResetSuccess(false);
     setVerificationCode("");
     setNewPassword("");
     setConfirmPassword("");
@@ -189,10 +203,12 @@ const SignIn = () => {
             Back to Home
           </Link>
           <h1 className="text-3xl font-bold text-black mb-2 drop-shadow-lg">
-            {isCodeVerification ? "Reset Your Password" : isForgotPassword ? "Reset Password" : "Welcome Back"}
+            {isResetSuccess ? "Password Reset Complete" : isCodeVerification ? "Reset Your Password" : isForgotPassword ? "Reset Password" : "Welcome Back"}
           </h1>
           <p className="text-black/90 drop-shadow-md">
-            {isCodeVerification 
+            {isResetSuccess 
+              ? "Your password has been successfully reset"
+              : isCodeVerification 
               ? "Enter the code from your email and set a new password"
               : isForgotPassword 
               ? "Enter your email to receive a password reset link"
@@ -204,10 +220,12 @@ const SignIn = () => {
         <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-md">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-bold text-center text-slate-900">
-              {isCodeVerification ? "Reset Password" : isForgotPassword ? "Reset Password" : "Sign In"}
+              {isResetSuccess ? "Success!" : isCodeVerification ? "Reset Password" : isForgotPassword ? "Reset Password" : "Sign In"}
             </CardTitle>
             <CardDescription className="text-center text-slate-600">
-              {isCodeVerification 
+              {isResetSuccess 
+                ? "You can now sign in with your new password"
+                : isCodeVerification 
                 ? "Enter the verification code and your new password"
                 : isForgotPassword 
                 ? "We'll send you a password reset email"
@@ -216,7 +234,25 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isCodeVerification ? (
+            {isResetSuccess ? (
+              <div className="text-center space-y-6">
+                <div className="flex justify-center">
+                  <CheckCircle className="w-16 h-16 text-green-500" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-slate-900">Password Reset Complete!</h3>
+                  <p className="text-slate-600">
+                    Your password has been successfully updated. You can now sign in with your new password.
+                  </p>
+                </div>
+                <Button
+                  onClick={resetToSignIn}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                >
+                  Continue to Sign In
+                </Button>
+              </div>
+            ) : isCodeVerification ? (
               <form onSubmit={handlePasswordReset} className="space-y-4">
                 {errors.general && (
                   <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
@@ -228,15 +264,33 @@ const SignIn = () => {
                   <Label htmlFor="verificationCode" className="text-slate-700 font-medium">
                     Verification Code
                   </Label>
-                  <Input
-                    id="verificationCode"
-                    type="text"
-                    placeholder="Enter the code from your email"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    className="transition-all duration-200 border-slate-200 focus:border-blue-500 focus:ring-blue-100"
-                    required
-                  />
+                  <div className="flex justify-center">
+                    <InputOTP
+                      maxLength={6}
+                      value={verificationCode}
+                      onChange={(value) => {
+                        setVerificationCode(value);
+                        if (errors.verificationCode) {
+                          setErrors(prev => ({ ...prev, verificationCode: "" }));
+                        }
+                      }}
+                    >
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                  {errors.verificationCode && (
+                    <p className="text-red-500 text-sm text-center">{errors.verificationCode}</p>
+                  )}
+                  <p className="text-xs text-slate-500 text-center">
+                    Enter the 6-digit code from your email
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -249,9 +303,16 @@ const SignIn = () => {
                     placeholder="Enter your new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="transition-all duration-200 border-slate-200 focus:border-blue-500 focus:ring-blue-100"
+                    className={`transition-all duration-200 ${
+                      errors.newPassword
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-100"
+                    }`}
                     required
                   />
+                  {errors.newPassword && (
+                    <p className="text-red-500 text-sm">{errors.newPassword}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -385,7 +446,7 @@ const SignIn = () => {
               </form>
             )}
 
-            {!isForgotPassword && !isCodeVerification && (
+            {!isForgotPassword && !isCodeVerification && !isResetSuccess && (
               <div className="mt-4 text-center">
                 <button
                   onClick={() => setIsForgotPassword(true)}
@@ -396,7 +457,7 @@ const SignIn = () => {
               </div>
             )}
 
-            {(isForgotPassword || isCodeVerification) && (
+            {(isForgotPassword || isCodeVerification) && !isResetSuccess && (
               <div className="mt-4 text-center">
                 <button
                   onClick={resetToSignIn}
@@ -407,17 +468,19 @@ const SignIn = () => {
               </div>
             )}
 
-            <div className="mt-6 text-center">
-              <p className="text-slate-600">
-                Don't have an account?{" "}
-                <Link
-                  to="/sign-up"
-                  className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </div>
+            {!isResetSuccess && (
+              <div className="mt-6 text-center">
+                <p className="text-slate-600">
+                  Don't have an account?{" "}
+                  <Link
+                    to="/sign-up"
+                    className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
