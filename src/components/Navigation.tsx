@@ -77,7 +77,7 @@ const Navigation = () => {
                 )
               )}
 
-              {/* Authentication buttons */}
+              {/* Desktop Authentication buttons */}
               <SignedOut>
                 <Link to="/sign-in">
                   <Button className="gradient-primary text-white px-6 rounded-full hover:scale-105 transition-transform duration-200 shadow-md">
@@ -143,12 +143,15 @@ const Navigation = () => {
                   </SignedOut>
 
                   <SignedIn>
-                    <div className="flex items-center justify-center mt-4">
+                    <div className="flex items-center justify-center mt-6 p-4 bg-gray-50 rounded-xl">
                       <UserButton
                         afterSignOutUrl="/"
                         appearance={{
                           elements: {
-                            avatarBox: "w-10 h-10 rounded-full",
+                            avatarBox: "w-12 h-12 rounded-full",
+                            userButtonPopoverCard: "bg-white shadow-lg border border-gray-200",
+                            userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100 p-3 text-base",
+                            userButtonPopoverActionButtonText: "font-medium",
                           },
                         }}
                       />
