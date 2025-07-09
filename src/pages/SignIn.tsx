@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSignIn, useAuth, useSignOut } from "@clerk/clerk-react";
+import { useSignIn, useAuth, useClerk } from "@clerk/clerk-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ import { Eye, EyeOff, ArrowLeft, Mail, Lock, CheckCircle, LogOut } from "lucide-
 const SignIn = () => {
   const { isLoaded: isAuthLoaded, isSignedIn } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
-  const { signOut } = useSignOut();
+  const { signOut } = useClerk();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
