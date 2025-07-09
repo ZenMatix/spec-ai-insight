@@ -101,7 +101,12 @@ const SignIn = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isLoaded) return;
+    
+    // Check if Clerk is loaded and auth state is available
+    if (!isLoaded || !isAuthLoaded) {
+      toast.error("Please wait while we initialize...");
+      return;
+    }
 
     // Double-check authentication state before attempting sign-in
     if (isSignedIn) {
@@ -257,9 +262,14 @@ const SignIn = () => {
   };
 
   // Show loading while checking auth state
-  if (!isAuthLoaded) {
+  if (!isAuthLoaded || !isLoaded) {
     return (
-      <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative">
+      <div
+        className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
+        style={{
+          backgroundImage: `url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp')`,
+        }}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="text-black/70 mt-4">Loading...</p>
