@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSignIn, useAuth, useClerk } from "@clerk/clerk-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,19 @@ const SignIn = () => {
   const { isLoaded: isAuthLoaded, isSignedIn } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
   const { signOut } = useClerk();
+  const navigate = useNavigate();
+  
+  // Redirect immediately if already signed in
+  useEffect(() => {
+    if (isAuthLoaded && isSignedIn) {
+      // Small delay to prevent flash of content
+      const timer = setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthLoaded, isSignedIn, navigate]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,10 +49,9 @@ const SignIn = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordResetLoading, setIsPasswordResetLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const navigate = useNavigate();
 
-  // Handle already signed in users
-  if (isAuthLoaded && isSignedIn) {
+  // Show loading while checking auth state
+  if (!isAuthLoaded || !isLoaded) {
     return (
       <div
         className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
@@ -47,53 +59,26 @@ const SignIn = () => {
           backgroundImage: `url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp')`,
         }}
       >
-        <div className="w-full max-w-md relative z-10">
-          <div className="mb-8 text-center">
-            <Link
-              to="/"
-              className="appearance-none border-none inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all mb-6 shadow-md"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-bold text-black mb-2 drop-shadow-lg">
-              Already Signed In
-            </h1>
-            <p className="text-black/90 drop-shadow-md">
-              You're already signed in to your account
-            </p>
-          </div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-black/70 mt-4">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-          <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-md">
-            <CardHeader className="space-y-1 pb-6">
-              <CardTitle className="text-2xl font-bold text-center text-slate-900">
-                Welcome Back!
-              </CardTitle>
-              <CardDescription className="text-center text-slate-600">
-                You're already signed in. Choose what you'd like to do next.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button
-                onClick={() => navigate("/")}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
-              >
-                Go to Dashboard
-              </Button>
-              
-              <Button
-                onClick={async () => {
-                  await signOut();
-                  toast.success("Signed out successfully");
-                }}
-                variant="outline"
-                className="w-full border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold py-3 rounded-lg transition-all duration-200"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out & Sign In as Different User
-              </Button>
-            </CardContent>
-          </Card>
+  // If user is signed in, show redirect message (brief flash before redirect)
+  if (isSignedIn) {
+    return (
+      <div
+        className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
+        style={{
+          backgroundImage: `url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp')`,
+        }}
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-black/70 mt-4">Redirecting...</p>
         </div>
       </div>
     );
@@ -108,10 +93,10 @@ const SignIn = () => {
       return;
     }
 
-    // Double-check authentication state before attempting sign-in
+    // Prevent sign-in if user is already signed in
     if (isSignedIn) {
       toast.info("You're already signed in. Redirecting...");
-      navigate("/");
+      navigate("/", { replace: true });
       return;
     }
 
@@ -127,7 +112,7 @@ const SignIn = () => {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         toast.success("Welcome back!");
-        navigate("/");
+        navigate("/", { replace: true });
       } else {
         console.log(result);
       }
@@ -223,10 +208,10 @@ const SignIn = () => {
       });
 
       if (result.status === "complete") {
-        // Don't automatically log in to prevent session conflicts
-        toast.success("Password reset successful!");
-        setIsResetSuccess(true);
-        setIsCodeVerification(false);
+        // Set the session to complete the sign-in process
+        await setActive({ session: result.createdSessionId });
+        toast.success("Password reset successful! You are now signed in.");
+        navigate("/", { replace: true });
       }
     } catch (err: any) {
       console.error("Password reset error:", err);
@@ -260,23 +245,6 @@ const SignIn = () => {
     setConfirmPassword("");
     setErrors({});
   };
-
-  // Show loading while checking auth state
-  if (!isAuthLoaded || !isLoaded) {
-    return (
-      <div
-        className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
-        style={{
-          backgroundImage: `url('https://qicraxjvaycdzyntnxtz.supabase.co/storage/v1/object/public/vdospec//Header.webp')`,
-        }}
-      >
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-black/70 mt-4">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
