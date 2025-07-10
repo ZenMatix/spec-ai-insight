@@ -2,13 +2,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, LogOut, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useClerk, useUser } from "@clerk/clerk-react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { signOut } = useClerk();
+  const { user } = useUser();
 
   const isGetStartedPage = location.pathname === "/get-started";
   const isAiChatPage = location.pathname === "/Ai-chat";
@@ -34,6 +36,11 @@ const Navigation = () => {
     }
     const element = document.querySelector(href);
     element?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleMobileSignOut = async () => {
+    setIsOpen(false);
+    await signOut({ redirectUrl: "/" });
   };
 
   return (
@@ -143,18 +150,30 @@ const Navigation = () => {
                   </SignedOut>
 
                   <SignedIn>
-                    <div className="flex items-center justify-center mt-6 p-4 bg-gray-50 rounded-xl">
-                      <UserButton
-                        afterSignOutUrl="/"
-                        appearance={{
-                          elements: {
-                            avatarBox: "w-12 h-12 rounded-full",
-                            userButtonPopoverCard: "bg-white shadow-lg border border-gray-200",
-                            userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100 p-3 text-base",
-                            userButtonPopoverActionButtonText: "font-medium",
-                          },
-                        }}
-                      />
+                    <div className="mt-6 space-y-4">
+                      {/* User Info Display */}
+                      <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
+                          <User className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {user?.fullName || user?.firstName || "User"}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">
+                            {user?.primaryEmailAddress?.emailAddress}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Sign Out Button */}
+                      <button
+                        onClick={handleMobileSignOut}
+                        className="flex items-center justify-center space-x-2 w-full p-4 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors duration-200 border border-red-200 hover:border-red-300"
+                      >
+                        <LogOut className="h-5 w-5" />
+                        <span className="font-medium">Sign Out</span>
+                      </button>
                     </div>
                   </SignedIn>
                 </div>
