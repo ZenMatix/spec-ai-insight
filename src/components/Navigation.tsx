@@ -166,13 +166,13 @@ const Navigation = () => {
                         </div>
                       </div>
 
-                      {/* Sign Out Button */}
+                      {/* Enhanced Red Sign Out Button */}
                       <button
                         onClick={handleMobileSignOut}
-                        className="flex items-center justify-center space-x-2 w-full p-4 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors duration-200 border border-red-200 hover:border-red-300"
+                        className="flex items-center justify-center space-x-2 w-full p-4 bg-red-600 text-white hover:bg-red-700 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02] font-medium"
                       >
                         <LogOut className="h-5 w-5" />
-                        <span className="font-medium">Sign Out</span>
+                        <span>Sign Out</span>
                       </button>
                     </div>
                   </SignedIn>
