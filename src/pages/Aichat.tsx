@@ -277,34 +277,28 @@ const Aichat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Modern header */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <h1 className="text-xl font-semibold text-gray-900">AI Chat</h1>
+    <div className="min-h-screen bg-gray-50/30">
+      <div className="pt-24 pb-6">
+        <div className="max-w-4xl mx-auto px-4">
+          {isUploading ? (
+            <DocumentUploadLoader fileName={uploadingFileName} progress={uploadProgress} />
+          ) : showWelcomeScreen ? (
+            <WelcomeScreen 
+              onFileUpload={handleWelcomeFileUpload} 
+              onStartChat={handleStartChat}
+            />
+          ) : (
+            <ChatInterface
+              messages={messages}
+              inputMessage={inputMessage}
+              onInputChange={setInputMessage}
+              onSendMessage={handleSendMessage}
+              onFileUpload={handleFileUpload}
+              onDocumentClick={handleDocumentClick}
+              isTyping={isTyping}
+            />
+          )}
         </div>
-      </div>
-
-      {/* Main content */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        {isUploading ? (
-          <DocumentUploadLoader fileName={uploadingFileName} progress={uploadProgress} />
-        ) : showWelcomeScreen ? (
-          <WelcomeScreen 
-            onFileUpload={handleWelcomeFileUpload} 
-            onStartChat={handleStartChat}
-          />
-        ) : (
-          <ChatInterface
-            messages={messages}
-            inputMessage={inputMessage}
-            onInputChange={setInputMessage}
-            onSendMessage={handleSendMessage}
-            onFileUpload={handleFileUpload}
-            onDocumentClick={handleDocumentClick}
-            isTyping={isTyping}
-          />
-        )}
       </div>
       
       {/* Document Preview Modal */}
