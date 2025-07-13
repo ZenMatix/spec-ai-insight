@@ -32,13 +32,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Skip auto-scroll on initial render/page load
     if (!hasInitializedRef.current) {
       hasInitializedRef.current = true;
       return;
     }
 
-    // Only auto-scroll for non-document messages and AI responses
     const lastMessage = messages[messages.length - 1];
     const shouldScroll = !lastMessage?.document || lastMessage?.role === "assistant";
     
@@ -48,9 +46,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-180px)] bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">
+    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 scroll-smooth">
         {messages.map((message, idx) => (
           <MessageBubble 
             key={idx} 
@@ -67,8 +65,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Chat input */}
-      <div className="border-t border-gray-200 p-4">
+      {/* Chat input - sticky at bottom */}
+      <div className="sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent pt-6 pb-4">
         <ChatInput
           inputMessage={inputMessage}
           onInputChange={onInputChange}
