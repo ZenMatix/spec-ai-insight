@@ -58,16 +58,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="flex items-end gap-2 sm:gap-3 max-w-4xl mx-auto px-2 sm:px-0">
-      {/* File upload button */}
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        className="flex-shrink-0 p-2 sm:p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation"
-        title="Upload document"
-      >
-        <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
-      </button>
-      
+    <div className="relative">
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -77,30 +68,46 @@ const ChatInput: React.FC<ChatInputProps> = ({
         onChange={handleFileSelect}
       />
       
-      {/* Message input container */}
-      <div className="flex-1 flex items-end gap-2 sm:gap-3 bg-white border border-gray-300 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 shadow-sm focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 min-h-[44px]">
-        <textarea
-          ref={textareaRef}
-          value={inputMessage}
-          onChange={handleTextareaChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Message ChatGPT..."
-          className="flex-1 resize-none bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-sm sm:text-base leading-5 sm:leading-6 py-1"
-          style={{ 
-            minHeight: '24px',
-            maxHeight: '150px',
-            height: 'auto'
-          }}
-        />
-        
-        {/* Send button */}
-        <button
-          onClick={onSendMessage}
-          disabled={!inputMessage.trim()}
-          className="flex-shrink-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-600 p-2 rounded-lg transition-colors touch-manipulation"
-        >
-          <Send className="w-3 h-3 sm:w-4 sm:h-4" />
-        </button>
+      {/* Main input container */}
+      <div className="relative bg-white border border-gray-200 rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-200 focus-within:shadow-xl">
+        {/* Input area */}
+        <div className="flex items-end px-4 py-3 gap-3">
+          {/* File upload button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Upload document"
+          >
+            <Paperclip className="w-5 h-5" />
+          </button>
+          
+          {/* Textarea */}
+          <textarea
+            ref={textareaRef}
+            value={inputMessage}
+            onChange={handleTextareaChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Message ChatGPT..."
+            className="flex-1 resize-none bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-base leading-6 py-2 max-h-[120px]"
+            style={{ 
+              minHeight: '28px',
+              height: 'auto'
+            }}
+          />
+          
+          {/* Send button */}
+          <button
+            onClick={onSendMessage}
+            disabled={!inputMessage.trim()}
+            className={`flex-shrink-0 p-2 rounded-lg transition-all duration-200 ${
+              inputMessage.trim() 
+                ? "bg-gray-800 hover:bg-gray-900 text-white shadow-sm hover:shadow-md" 
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );

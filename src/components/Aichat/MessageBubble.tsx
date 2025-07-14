@@ -37,28 +37,37 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, onDocume
   };
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} w-full`}>
-      <div className="max-w-3xl">
+    <div className="w-full">
+      {/* Avatar and message layout */}
+      <div className={`flex items-start gap-4 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
         {/* Avatar */}
-        <div className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${
-            isUser 
-              ? "bg-green-600" 
-              : "bg-black"
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0 ${
+          isUser 
+            ? "bg-gradient-to-br from-blue-500 to-blue-600" 
+            : "bg-gray-800"
+        }`}>
+          {isUser ? "Y" : "AI"}
+        </div>
+        
+        {/* Message content area */}
+        <div className={`flex-1 max-w-none ${isUser ? "flex flex-col items-end" : ""}`}>
+          {/* User name/label */}
+          <div className={`text-sm font-medium mb-2 ${
+            isUser ? "text-gray-700 text-right" : "text-gray-700"
           }`}>
-            {isUser ? "U" : "AI"}
+            {isUser ? "You" : "ChatGPT"}
           </div>
           
-          <div className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}>
-            {/* Document attachment */}
-            {message.document && (
+          {/* Document attachment */}
+          {message.document && (
+            <div className={`mb-4 ${isUser ? "flex justify-end" : ""}`}>
               <div 
-                className="mb-2 p-3 bg-gray-50 border border-gray-200 rounded-lg max-w-sm cursor-pointer hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 group"
+                className="inline-block p-3 bg-gray-50 border border-gray-200 rounded-xl max-w-sm cursor-pointer hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 group"
                 onClick={handleDocumentClick}
                 title="Click to preview document"
               >
                 <div className="flex items-center gap-3">
-                  <FileText className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                  <FileText className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
                       {message.document.name}
@@ -88,45 +97,43 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, onDocume
                   </div>
                 </div>
               </div>
-            )}
-            
-            {/* Message content with group hover for copy button */}
-            <div className={`group rounded-lg px-4 py-3 ${
-              isUser 
-                ? "bg-blue-600 text-white" 
-                : "bg-gray-100 text-gray-900"
-            }`}>
-              <div className="text-sm whitespace-pre-line">{message.content}</div>
-              
-              {/* Message actions */}
-              <div className="flex mt-2 items-center justify-between">
-                <span className={`text-xs ${
-                  isUser ? "text-blue-100" : "text-gray-500"
-                }`}>
-                  {new Date(message.timestamp).toLocaleTimeString([], { 
-                    hour: "2-digit", 
-                    minute: "2-digit" 
-                  })}
-                </span>
-                <button
-                  onClick={handleCopy}
-                  className={`ml-3 p-1 rounded transition-all duration-200 ${
-                    copied 
-                      ? "opacity-100" 
-                      : "opacity-0 group-hover:opacity-100"
-                  } ${
-                    isUser ? "hover:bg-blue-700" : "hover:bg-gray-200"
-                  }`}
-                  title="Copy"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
             </div>
+          )}
+          
+          {/* Message content */}
+          <div className={`group relative ${isUser ? "flex justify-end" : ""}`}>
+            <div className={`prose max-w-none ${
+              isUser 
+                ? "text-gray-800" 
+                : "text-gray-800"
+            }`}>
+              <div className="text-[15px] leading-7 whitespace-pre-line">{message.content}</div>
+            </div>
+            
+            {/* Copy button */}
+            <button
+              onClick={handleCopy}
+              className={`absolute -right-8 top-0 p-1.5 rounded-md transition-all duration-200 ${
+                copied 
+                  ? "opacity-100 bg-gray-100" 
+                  : "opacity-0 group-hover:opacity-100 hover:bg-gray-100"
+              }`}
+              title="Copy"
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-green-600" />
+              ) : (
+                <Copy className="w-4 h-4 text-gray-500" />
+              )}
+            </button>
+          </div>
+          
+          {/* Timestamp */}
+          <div className={`text-xs text-gray-400 mt-2 ${isUser ? "text-right" : ""}`}>
+            {new Date(message.timestamp).toLocaleTimeString([], { 
+              hour: "2-digit", 
+              minute: "2-digit" 
+            })}
           </div>
         </div>
       </div>
