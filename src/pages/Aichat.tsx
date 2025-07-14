@@ -498,15 +498,22 @@ const Aichat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div 
+      className="min-h-screen flex flex-col relative"
+      style={{
+        backgroundImage: 'url(/Header.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       {/* Main content area */}
-      <div className="pt-24 flex-1 flex flex-col">
+      <div className="relative z-10 pt-24 sm:pt-32 flex-1 flex flex-col">
         <div className="flex-1 flex justify-center">
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-4xl mx-auto px-4">
             {isUploading ? (
-              <div className="px-4">
-                <DocumentUploadLoader fileName={uploadingFileName} progress={uploadProgress} />
-              </div>
+              <DocumentUploadLoader fileName={uploadingFileName} progress={uploadProgress} />
             ) : showWelcomeScreen ? (
               <WelcomeScreen 
                 onFileUpload={handleWelcomeFileUpload} 

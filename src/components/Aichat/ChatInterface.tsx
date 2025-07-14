@@ -48,39 +48,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)]">
+    <div className="flex flex-col h-[calc(100vh-180px)] bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto space-y-8">
-          {messages.map((message, idx) => (
-            <MessageBubble 
-              key={idx} 
-              message={message} 
-              isUser={message.role === "user"} 
-              onDocumentClick={onDocumentClick}
-            />
-          ))}
-          {isTyping && (
-            <div className="flex justify-start">
-              <div className="max-w-3xl mx-auto w-full">
-                <TypingIndicator />
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+        {messages.map((message, idx) => (
+          <MessageBubble 
+            key={idx} 
+            message={message} 
+            isUser={message.role === "user"} 
+            onDocumentClick={onDocumentClick}
+          />
+        ))}
+        {isTyping && (
+          <div className="flex justify-start">
+            <TypingIndicator />
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
       
       {/* Chat input */}
-      <div className="border-t border-gray-100 bg-white px-4 py-6">
-        <div className="max-w-3xl mx-auto">
-          <ChatInput
-            inputMessage={inputMessage}
-            onInputChange={onInputChange}
-            onSendMessage={onSendMessage}
-            onFileUpload={onFileUpload}
-          />
-        </div>
+      <div className="border-t border-gray-200 p-4">
+        <ChatInput
+          inputMessage={inputMessage}
+          onInputChange={onInputChange}
+          onSendMessage={onSendMessage}
+          onFileUpload={onFileUpload}
+        />
       </div>
     </div>
   );
